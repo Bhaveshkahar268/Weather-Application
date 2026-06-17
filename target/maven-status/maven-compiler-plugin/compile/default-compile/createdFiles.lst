@@ -1,0 +1,15 @@
+com/weather/service/GeocodingService$GeocodingResult.class
+com/weather/WeatherApplication.class
+com/weather/dto/WeatherDTO.class
+com/weather/dto/WeatherDTO$CurrentWeather.class
+com/weather/exception/CityNotFoundException.class
+com/weather/service/GeocodingService$GeocodingResponse.class
+com/weather/service/GeocodingService.class
+com/weather/controller/WeatherController.class
+com/weather/service/WeatherIntegrationService$OpenMeteoResponse.class
+com/weather/service/WeatherIntegrationService$Current.class
+com/weather/service/WeatherIntegrationService$Daily.class
+com/weather/dto/WeatherDTO$ForecastDay.class
+com/weather/service/WeatherService.class
+com/weather/service/GeocodingService$Geolocation.class
+com/weather/service/WeatherIntegrationService.class
