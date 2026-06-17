@@ -16,15 +16,27 @@ public class WeatherService {
 
     private final GeocodingService geocodingService;
     private final WeatherIntegrationService weatherIntegrationService;
+    private final WeatherApiService weatherApiService;
 
-    public WeatherService(GeocodingService geocodingService, WeatherIntegrationService weatherIntegrationService) {
+    public WeatherService(GeocodingService geocodingService, 
+                          WeatherIntegrationService weatherIntegrationService,
+                          WeatherApiService weatherApiService) {
         this.geocodingService = geocodingService;
         this.weatherIntegrationService = weatherIntegrationService;
+        this.weatherApiService = weatherApiService;
     }
 
     @Cacheable(value = "weather", key = "#cityName.toLowerCase().trim()")
     public WeatherDTO getWeatherForCity(String cityName) {
-        logger.info("Fetching fresh weather data from APIs for: {}", cityName);
+        if (weatherApiService.isConfigured()) {
+            try {
+                return weatherApiService.getWeather(cityName);
+            } catch (Exception e) {
+                logger.error("WeatherAPI.com query failed, falling back to Open-Meteo or mock: {}", e.getMessage());
+            }
+        }
+
+        logger.info("Fetching fresh weather data from Open-Meteo APIs for: {}", cityName);
         
         try {
             // 1. Resolve city to latitude & longitude

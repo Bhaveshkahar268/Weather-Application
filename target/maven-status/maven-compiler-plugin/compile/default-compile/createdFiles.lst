@@ -4,6 +4,7 @@ com/weather/dto/WeatherDTO.class
 com/weather/dto/WeatherDTO$CurrentWeather.class
 com/weather/exception/CityNotFoundException.class
 com/weather/service/GeocodingService$GeocodingResponse.class
+com/weather/service/WeatherApiService.class
 com/weather/service/GeocodingService.class
 com/weather/controller/WeatherController.class
 com/weather/service/WeatherIntegrationService$OpenMeteoResponse.class
