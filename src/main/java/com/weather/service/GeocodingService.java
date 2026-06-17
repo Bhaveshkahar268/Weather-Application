@@ -11,10 +11,10 @@ public class GeocodingService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public Geolocation getCoordinates(String cityName) {
-        String url = "https://geocoding-api.open-meteo.com/v1/search?name=" + cityName + "&count=1&language=en&format=json";
+        String url = "https://geocoding-api.open-meteo.com/v1/search?name={name}&count=1&language=en&format=json";
         
         try {
-            GeocodingResponse response = restTemplate.getForObject(url, GeocodingResponse.class);
+            GeocodingResponse response = restTemplate.getForObject(url, GeocodingResponse.class, cityName.trim());
             if (response == null || response.getResults() == null || response.getResults().isEmpty()) {
                 throw new CityNotFoundException("City not found: " + cityName);
             }
