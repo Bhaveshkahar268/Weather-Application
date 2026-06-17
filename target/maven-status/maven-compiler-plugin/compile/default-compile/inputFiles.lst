@@ -1,7 +1,7 @@
-/Users/aditikahar/bhavesh/Weather Application/src/main/java/com/weather/service/GeocodingService.java
-/Users/aditikahar/bhavesh/Weather Application/src/main/java/com/weather/service/WeatherService.java
-/Users/aditikahar/bhavesh/Weather Application/src/main/java/com/weather/WeatherApplication.java
-/Users/aditikahar/bhavesh/Weather Application/src/main/java/com/weather/service/WeatherIntegrationService.java
-/Users/aditikahar/bhavesh/Weather Application/src/main/java/com/weather/exception/CityNotFoundException.java
-/Users/aditikahar/bhavesh/Weather Application/src/main/java/com/weather/dto/WeatherDTO.java
-/Users/aditikahar/bhavesh/Weather Application/src/main/java/com/weather/controller/WeatherController.java
+/Users/aditikahar/bhavesh/Weather-Application/src/main/java/com/weather/exception/CityNotFoundException.java
+/Users/aditikahar/bhavesh/Weather-Application/src/main/java/com/weather/controller/WeatherController.java
+/Users/aditikahar/bhavesh/Weather-Application/src/main/java/com/weather/service/WeatherIntegrationService.java
+/Users/aditikahar/bhavesh/Weather-Application/src/main/java/com/weather/service/WeatherService.java
+/Users/aditikahar/bhavesh/Weather-Application/src/main/java/com/weather/dto/WeatherDTO.java
+/Users/aditikahar/bhavesh/Weather-Application/src/main/java/com/weather/service/GeocodingService.java
+/Users/aditikahar/bhavesh/Weather-Application/src/main/java/com/weather/WeatherApplication.java

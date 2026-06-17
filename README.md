@@ -27,7 +27,7 @@ An attractive, interactive, and modern weather forecasting web application built
 ## Directory Structure
 
 ```text
-TO-DO-List/
+Weather-Application/
 ├── pom.xml                               # Maven Project dependencies
 ├── README.md                             # Project Documentation
 └── src/
@@ -69,7 +69,7 @@ TO-DO-List/
 
 1. **Clone or navigate to the project directory:**
    ```bash
-   cd /Users/aditikahar/bhavesh/TO-DO-List
+   cd /Users/aditikahar/bhavesh/Weather-Application
    ```
 
 2. **Build and start the application:**
