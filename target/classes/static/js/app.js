@@ -3,6 +3,37 @@ let currentWeatherData = null;
 let useFahrenheit = false;
 let animationFrameId = null;
 
+const weatherDescriptions = {
+    0: { desc: "Clear sky", group: "sunny" },
+    1: { desc: "Mainly clear", group: "sunny" },
+    2: { desc: "Partly cloudy", group: "cloudy" },
+    3: { desc: "Overcast", group: "cloudy" },
+    45: { desc: "Foggy", group: "cloudy" },
+    48: { desc: "Depositing rime fog", group: "cloudy" },
+    51: { desc: "Light drizzle", group: "rainy" },
+    53: { desc: "Moderate drizzle", group: "rainy" },
+    55: { desc: "Dense drizzle", group: "rainy" },
+    56: { desc: "Light freezing drizzle", group: "snowy" },
+    57: { desc: "Dense freezing drizzle", group: "snowy" },
+    61: { desc: "Slight rain", group: "rainy" },
+    63: { desc: "Moderate rain", group: "rainy" },
+    65: { desc: "Heavy rain", group: "rainy" },
+    66: { desc: "Light freezing rain", group: "snowy" },
+    67: { desc: "Heavy freezing rain", group: "snowy" },
+    71: { desc: "Slight snow fall", group: "snowy" },
+    73: { desc: "Moderate snow fall", group: "snowy" },
+    75: { desc: "Heavy snow fall", group: "snowy" },
+    77: { desc: "Snow grains", group: "snowy" },
+    80: { desc: "Slight rain showers", group: "rainy" },
+    81: { desc: "Moderate rain showers", group: "rainy" },
+    82: { desc: "Violent rain showers", group: "rainy" },
+    85: { desc: "Slight snow showers", group: "snowy" },
+    86: { desc: "Heavy snow showers", group: "snowy" },
+    95: { desc: "Thunderstorm", group: "stormy" },
+    96: { desc: "Thunderstorm with slight hail", group: "stormy" },
+    99: { desc: "Thunderstorm with heavy hail", group: "stormy" }
+};
+
 // DOM Elements
 const searchForm = document.getElementById('search-form');
 const cityInput = document.getElementById('city-input');
@@ -91,15 +122,67 @@ async function fetchWeatherData(city) {
     hideError();
     
     try {
-        const response = await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
-        const data = await response.json();
+        // 1. Geocode city name to coordinates (using Open-Meteo Geocoding directly from browser)
+        const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`;
+        const geoRes = await fetch(geoUrl);
+        const geoData = await geoRes.json();
         
-        if (!response.ok) {
-            const errorMsg = data.details ? `${data.error} (${data.details})` : (data.error || 'Failed to fetch weather data');
-            throw new Error(errorMsg);
+        if (!geoData.results || geoData.results.length === 0) {
+            throw new Error(`City not found: "${city}"`);
         }
         
-        currentWeatherData = data;
+        const loc = geoData.results[0];
+        const { name, country_code, latitude, longitude } = loc;
+        
+        // 2. Fetch weather forecast using coordinates
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,pressure_msl,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`;
+        const weatherRes = await fetch(weatherUrl);
+        const weatherData = await weatherRes.json();
+        
+        if (!weatherRes.ok) {
+            throw new Error("Failed to retrieve weather details from meteorological servers.");
+        }
+        
+        // 3. Map values to UI-compatible unified model
+        const currentCode = weatherData.current.weather_code;
+        const currentInfo = weatherDescriptions[currentCode] || { desc: "Clear sky", group: "sunny" };
+        
+        const forecastList = [];
+        const daily = weatherData.daily;
+        if (daily && daily.time) {
+            const limit = Math.min(5, daily.time.length);
+            for (let i = 0; i < limit; i++) {
+                const code = daily.weather_code[i];
+                const info = weatherDescriptions[code] || { desc: "Clear sky", group: "sunny" };
+                forecastList.push({
+                    date: daily.time[i],
+                    maxTemp: daily.temperature_2m_max[i],
+                    minTemp: daily.temperature_2m_min[i],
+                    weatherCode: code,
+                    weatherDescription: info.desc,
+                    weatherGroup: info.group
+                });
+            }
+        }
+        
+        currentWeatherData = {
+            cityName: name,
+            country: country_code || "IN",
+            latitude: latitude,
+            longitude: longitude,
+            current: {
+                temp: weatherData.current.temperature_2m,
+                humidity: weatherData.current.relative_humidity_2m,
+                windSpeed: weatherData.current.wind_speed_10m,
+                windDirection: weatherData.current.wind_direction_10m,
+                pressure: weatherData.current.pressure_msl,
+                weatherCode: currentCode,
+                weatherDescription: currentInfo.desc,
+                weatherGroup: currentInfo.group
+            },
+            forecast: forecastList
+        };
+        
         renderWeather();
         
     } catch (err) {
