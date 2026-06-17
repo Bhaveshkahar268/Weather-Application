@@ -95,7 +95,8 @@ async function fetchWeatherData(city) {
         const data = await response.json();
         
         if (!response.ok) {
-            throw new Error(data.error || 'Failed to fetch weather data');
+            const errorMsg = data.details ? `${data.error} (${data.details})` : (data.error || 'Failed to fetch weather data');
+            throw new Error(errorMsg);
         }
         
         currentWeatherData = data;
