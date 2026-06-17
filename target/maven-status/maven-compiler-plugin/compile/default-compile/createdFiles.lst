@@ -1,3 +1,4 @@
+com/weather/service/WttrInService.class
 com/weather/service/GeocodingService$GeocodingResult.class
 com/weather/WeatherApplication.class
 com/weather/dto/WeatherDTO.class

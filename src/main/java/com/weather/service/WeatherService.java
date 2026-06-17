@@ -17,13 +17,16 @@ public class WeatherService {
     private final GeocodingService geocodingService;
     private final WeatherIntegrationService weatherIntegrationService;
     private final WeatherApiService weatherApiService;
+    private final WttrInService wttrInService;
 
     public WeatherService(GeocodingService geocodingService, 
                           WeatherIntegrationService weatherIntegrationService,
-                          WeatherApiService weatherApiService) {
+                          WeatherApiService weatherApiService,
+                          WttrInService wttrInService) {
         this.geocodingService = geocodingService;
         this.weatherIntegrationService = weatherIntegrationService;
         this.weatherApiService = weatherApiService;
+        this.wttrInService = wttrInService;
     }
 
     @Cacheable(value = "weather", key = "#cityName.toLowerCase().trim()")
@@ -84,8 +87,13 @@ public class WeatherService {
                 forecastList
             );
         } catch (Exception e) {
-            logger.error("Error occurred while contacting weather APIs, returning fallback mock weather data for: {}. Error: {}", cityName, e.getMessage());
-            return generateMockWeather(cityName);
+            logger.warn("Open-Meteo APIs failed (likely rate-limited). Trying keyless wttr.in fallback for: {}. Error: {}", cityName, e.getMessage());
+            try {
+                return wttrInService.getWeather(cityName);
+            } catch (Exception ex) {
+                logger.error("wttr.in fallback also failed. Returning mock weather: {}", ex.getMessage());
+                return generateMockWeather(cityName);
+            }
         }
     }
 
